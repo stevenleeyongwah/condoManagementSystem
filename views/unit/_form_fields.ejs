@@ -1,0 +1,78 @@
+<div class="form-group">
+  <label for="blockUnitNumber">Block & Unit number</label>
+  <input required value="<%= unit.blockUnitNumber %>" type="text" name="blockUnitNumber" id="blockUnitNumber" class="form-control">
+  <div class="blockUnitNumberError invalid-feedback"></div>
+</div>
+<div class="form-group">
+  <label for="name">Owner name</label>
+  <input required value="<%= unit.name %>" type="text" name="name" id="name" class="form-control">
+  <div class="nameError invalid-feedback"></div>
+</div>
+<div class="form-group">
+  <label for="contactNumber">Contact number</label>
+  <input required value="<%= unit.contactNumber %>" type="text" name="contactNumber" id="contactNumber" class="form-control">
+  <div class="contactNumberError invalid-feedback"></div>
+</div>
+
+<a href="/" class="btn btn-secondary">Cancel</a>
+<button type="submit" class="btn btn-primary">Save</button>
+
+<script>
+  const form = document.querySelector('form');
+
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    // Get reference
+    const inputBlockUnitNumber = document.getElementById("blockUnitNumber");
+    const blockUnitNumberError = document.querySelector('.blockUnitNumberError');
+    const inputName = document.getElementById("name");
+    const nameError = document.querySelector('.nameError');
+    const inputContactNumber = document.getElementById("contactNumber");
+    const contactNumberError = document.querySelector('.contactNumberError');
+  
+    // reset errors
+    blockUnitNumberError.textContent = '';
+    nameError.textContent = '';
+    contactNumberError.textContent = '';
+    inputBlockUnitNumber.classList.remove("is-invalid");
+    inputName.classList.remove("is-invalid");
+    inputContactNumber.classList.remove("is-invalid");
+    console.log('<%- action %>')
+    try {
+      const res = await fetch('<%- action %>', { 
+        method: 'POST', 
+        body: JSON.stringify({ 
+          blockUnitNumber: inputBlockUnitNumber.value, 
+          name: inputName.value, 
+          contactNumber: inputContactNumber.value 
+        }),
+        headers: {'Content-Type': 'application/json'}
+      });
+
+      const data = await res.json();
+
+      if (data.errors) {
+        if (data.errors.blockUnitNumber) {
+          inputBlockUnitNumber.classList.add("is-invalid");
+          blockUnitNumberError.textContent = data.errors.blockUnitNumber
+        }
+        if (data.errors.name) {       
+          inputName.classList.add("is-invalid");
+          nameError.textContent = data.errors.name
+        }
+        if (data.errors.contactNumber) {      
+          inputContactNumber.classList.add("is-invalid");
+          contactNumberError.textContent = data.errors.contactNumber
+        }
+      }
+      
+      if (data.saveUnit) {
+        location.assign('/');
+      }
+    }
+    catch (err) {
+      console.log("Error is here: ", err);
+    }
+  });
+</script>

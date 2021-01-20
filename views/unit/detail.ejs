@@ -1,0 +1,10 @@
+<div class="container">
+    <h1 class="mb-1">Block & Unit number: <%= unit.blockUnitNumber %></h1>
+    <div class="text-muted mb-2">
+      Date created: <%= unit.date.toLocaleDateString() %>
+    </div>
+    <h4 class="mb-3">Owner name: <%= unit.name %></h1>
+    <h4 class="mb-3">Contact number: <%= unit.contactNumber %></h1>
+    <a href="/" class="btn btn-secondary">All Condos</a>
+    <a href="/unit/edit/<%= unit.id %>" class="btn btn-info">Edit</a>
+</div>

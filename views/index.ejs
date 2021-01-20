@@ -1,0 +1,19 @@
+<h2 class="mt-2">Recently Added Condo</h2>
+<a href="/unit/new" class="btn btn-success mt-2">New Condo</a>
+<div class="row justify-content-around">
+<% units.forEach(unit => { %>
+    <div class="card mt-4 mb-4 col-md-5">
+      <div class="card-body">
+        <h4 class="card-title"><span class="font-weight-bold">Block & Unit: </span><%= unit.blockUnitNumber %></h4>
+        <div class="card-subtitle text-muted mb-2"><span class="font-weight-bold">Date created: </span><%= unit.date.toLocaleDateString() %></div>
+        <div class="card-text mb-2"><span class="font-weight-bold">Owner:</span> <%= unit.name %></div>
+        <div class="card-text mb-2"><span class="font-weight-bold">Contact Number:</span> <%= unit.contactNumber %></div>
+        <a href="unit/<%= unit._id %>" class="btn btn-primary">Detail</a>
+        <a href="unit/edit/<%= unit._id %>" class="btn btn-info">Edit</a>
+        <form action="/unit/<%= unit._id %>?_method=DELETE" method="POST" class="d-inline">
+          <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+      </div>
+    </div>
+<% }) %>
+</div>
