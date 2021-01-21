@@ -9,12 +9,15 @@ const visitorLogSchema = new Schema({
     },
     blockUnitNumber: { 
         type: String,
-        required: [true, 'Please enter block & unit number'],
-        validate: [/^[A-Z]-\d\d-\d\d$/, 'Invalid format of block & unit number'],
+        validate: [/^$|^[A-Z]-\d\d-\d\d$/, 'Invalid format of block & unit number'],
+    },
+    visitPurpose: {
+        type: String,
     },
     // Name of the condo owner
     entryDateTime: {
-        type: Date
+        type: Date,
+        required: true
     },
     // Contact number of owner
     exitDateTime: {

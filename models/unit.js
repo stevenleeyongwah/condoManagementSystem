@@ -20,7 +20,7 @@ const unitSchema = new mongoose.Schema({
         validate: [/^\d{8}$/, 'Invalid format of contact number'],
     },
     // Date of unit is created
-    createdAt: {
+    date: {
         type: Date,
         default: Date.now
     }

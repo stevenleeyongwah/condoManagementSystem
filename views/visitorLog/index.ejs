@@ -1,15 +1,21 @@
 <div class="container">
     <a href="/visitor" class="btn btn-success mb-3">Back</a>
-    <h4 class="mb-3">Owner name: <%= visitor.name %></h1>
-    <h4 class="mb-3">Contact number: <%= visitor.contactNumber %></h1>
-    <h4 class="mb-3">Last 3 digit of NRIC: <%= visitor.last3DigitNRIC %></h1>
-    
     <a href="/visitorLog/new/<%= visitor._id %>" class="btn btn-info mb-3">Add visit log</a>
+    <div class="font-weight-bold mb-3 text-uppercase">Visitor: <%= visitor.name %></div>
+    
+    <form action="/visitorLog/<%= visitor._id %>" method="GET">
+      <div class="input-group rounded mb-3">
+        <input type="search" class="form-control rounded" placeholder="Search with block & unit number (Example: B-00-01)" name="blockUnitNumber" value="<%= searchOptions.blockUnitNumber %>" />
+        <button type="submit" class="ml-2 btn btn-primary">Search</button>
+      </div>
+    </form>
 
     <table class="table table-hover">
         <thead>
           <tr>
-            <th scope="col">Block & Unit Number</th>
+            <th scope="col">Created At</th>
+            <th scope="col">Visit Block & Unit Number</th>
+            <th scope="col">Visit Purpose</th>
             <th scope="col">Entry Date Time</th>
             <th scope="col">Exit Date Time</th>
             <th scope="col">Edit</th>
@@ -19,7 +25,9 @@
         <tbody>
           <% visitorLog.forEach(log => { %>
             <tr>
+              <td><%= log.createdAt.toLocaleDateString() %></td>
               <td><%= log.blockUnitNumber %></td>
+              <td><%= log.visitPurpose %></td>
               <td><%= log.entryDateTime %></td>
               <td><%= log.exitDateTime %></td>
               <td><a href="/visitorLog/edit/<%= log.id %>" class="btn btn-info mb-3">Edit</a></td>
