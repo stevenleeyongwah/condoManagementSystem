@@ -1,0 +1,77 @@
+<div class="form-group">
+    <label for="name">Visitor name</label>
+    <input required value="<%= visitor.name %>" type="text" name="name" id="name" class="form-control">
+    <div class="nameError invalid-feedback"></div>
+  </div>
+  <div class="form-group">
+    <label for="contactNumber">Contact number</label>
+    <input required value="<%= visitor.contactNumber %>" type="text" name="contactNumber" id="contactNumber" class="form-control">
+    <div class="contactNumberError invalid-feedback"></div>
+  </div>
+  <div class="form-group">
+    <label for="last3DigitNRIC">Last 3 digit of NRIC</label>
+    <input required value="<%= visitor.last3DigitNRIC %>" type="text" name="last3DigitNRIC" id="last3DigitNRIC" class="form-control">
+    <div class="last3DigitNRICError invalid-feedback"></div>
+  </div>
+  <a href="/visitor" class="btn btn-secondary">Cancel</a>
+  <button type="submit" class="btn btn-primary">Save</button>
+  
+  <script>
+    const form = document.querySelector('form');
+  
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      // Get reference
+      const inputName = document.getElementById("name");
+      const nameError = document.querySelector('.nameError');
+      const inputContactNumber = document.getElementById("contactNumber");
+      const contactNumberError = document.querySelector('.contactNumberError');
+      const inputLast3DigitNRIC = document.getElementById("last3DigitNRIC");
+      const last3DigitNRICError = document.querySelector('.last3DigitNRICError');
+
+      // reset errors
+      nameError.textContent = '';
+      contactNumberError.textContent = '';
+      last3DigitNRICError.textContent = '';
+      inputName.classList.remove("is-invalid");
+      inputContactNumber.classList.remove("is-invalid");
+      inputLast3DigitNRIC.classList.remove("is-invalid");
+
+      try {
+        const res = await fetch('<%- action %>', { 
+          method: 'POST', 
+          body: JSON.stringify({ 
+            name: inputName.value, 
+            contactNumber: inputContactNumber.value,
+            last3DigitNRIC: inputLast3DigitNRIC.value 
+          }),
+          headers: {'Content-Type': 'application/json'}
+        });
+
+        const data = await res.json();
+
+        if (data.errors) {
+          if (data.errors.name) {       
+            inputName.classList.add("is-invalid");
+            nameError.textContent = data.errors.name
+          }
+          if (data.errors.contactNumber) {      
+            inputContactNumber.classList.add("is-invalid");
+            contactNumberError.textContent = data.errors.contactNumber
+          }
+          if (data.errors.last3DigitNRIC) {      
+            inputLast3DigitNRIC.classList.add("is-invalid");
+            last3DigitNRICError.textContent = data.errors.last3DigitNRIC
+          }
+        }
+        
+        if (data.saveVisitor) {
+          location.assign(data.redirect);
+        }
+      }
+      catch (err) {
+        console.log("Error is here: ", err);
+      }
+    });
+  </script>

@@ -1,0 +1,36 @@
+<div class="container">
+    <a href="/visitor" class="btn btn-success mb-3">Back</a>
+    <h4 class="mb-3">Owner name: <%= visitor.name %></h1>
+    <h4 class="mb-3">Contact number: <%= visitor.contactNumber %></h1>
+    <h4 class="mb-3">Last 3 digit of NRIC: <%= visitor.last3DigitNRIC %></h1>
+    
+    <a href="/visitorLog/new/<%= visitor._id %>" class="btn btn-info mb-3">Add visit log</a>
+
+    <table class="table table-hover">
+        <thead>
+          <tr>
+            <th scope="col">Block & Unit Number</th>
+            <th scope="col">Entry Date Time</th>
+            <th scope="col">Exit Date Time</th>
+            <th scope="col">Edit</th>
+            <th scope="col">Delete</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% visitorLog.forEach(log => { %>
+            <tr>
+              <td><%= log.blockUnitNumber %></td>
+              <td><%= log.entryDateTime %></td>
+              <td><%= log.exitDateTime %></td>
+              <td><a href="/visitorLog/edit/<%= log.id %>" class="btn btn-info mb-3">Edit</a></td>
+              <td>
+                <form action="/visitorLog/<%= visitor._id %>/<%= log._id %>?_method=DELETE" method="POST" class="d-inline">
+                  <button type="submit" class="btn btn-danger">Delete</button>
+                </form>
+
+              </td>
+            </tr>
+          <% }) %>          
+        </tbody>
+      </table>
+</div>

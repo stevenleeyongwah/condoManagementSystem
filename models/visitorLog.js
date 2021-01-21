@@ -1,29 +1,29 @@
 const mongoose = require('mongoose')
+const Schema = mongoose.Schema;
 
-const unitSchema = new mongoose.Schema({
+const visitorLogSchema = new Schema({
     // blockNumber has to be [ X(block(A-Z))-XX(floor(00-99))-XX(unit(00-99)) Example: A-02-03 ]
-    blockUnitNumber: {
+    visitor_id: { 
+        type: Schema.Types.ObjectId, 
+        ref: 'Visitor' 
+    },
+    blockUnitNumber: { 
         type: String,
         required: [true, 'Please enter block & unit number'],
         validate: [/^[A-Z]-\d\d-\d\d$/, 'Invalid format of block & unit number'],
-        unique: true,
     },
     // Name of the condo owner
-    name: {
-        type: String,
-        required: [true, 'Please enter name of condo owner'],
-        validate: [/^[a-zA-Z\s]{1,40}$/, 'Invalid format of owner name'],
+    entryDateTime: {
+        type: Date
     },
     // Contact number of owner
-    contactNumber: {
-        type: String,
-        validate: [/^\d{8}$/, 'Invalid format of contact number'],
+    exitDateTime: {
+        type: Date
     },
-    // Date of unit is created
     createdAt: {
         type: Date,
         default: Date.now
     }
 })
 
-module.exports = mongoose.model('Unit', unitSchema)
+module.exports = mongoose.model('VisitorLog', visitorLogSchema)

@@ -1,0 +1,82 @@
+<div class="form-group">
+  <label for="blockUnitNumber">Block & Unit Number</label>
+  <input required value="<%= visitorLog.blockUnitNumber %>" type="text" name="blockUnitNumber" id="blockUnitNumber" class="form-control">
+  <div class="blockUnitNumberError invalid-feedback"></div>
+</div>
+<div class="form-group">
+  <label for="entryDateTime">Entry Date Time</label>
+  <input required value="<%= visitorLog.entryDateTime %>" type="datetime-local" name="entryDateTime" id="entryDateTime" class="form-control">
+  <div class="entryDateTimeError invalid-feedback"></div>
+</div>
+<div class="form-group">
+  <label for="exitDateTime">Exit Date Time</label>
+  <input required value="<%= visitorLog.exitDateTime %>" type="datetime-local" name="exitDateTime" id="exitDateTime" class="form-control">
+  <div class="exitDateTimeError invalid-feedback"></div>
+</div>
+<a href="/visitorLog/<%= visitorLog.visitor_id %>" class="btn btn-secondary">Cancel</a>
+<button type="submit" class="btn btn-primary">Save</button>
+  
+<script>
+  const form = document.querySelector('form');
+    
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    // Get reference
+    const inputBlockUnitNumber = document.getElementById("blockUnitNumber");
+    const blockUnitNumberError = document.querySelector('.blockUnitNumberError');
+
+    const inputEntryDateTime = document.getElementById("entryDateTime");
+    const entryDateTimeError = document.querySelector('.entryDateTimeError');
+
+    const inputExitDateTime = document.getElementById("exitDateTime");
+    const exitDateTimeError = document.querySelector('.exitDateTimeError');
+
+    // reset errors
+    blockUnitNumberError.textContent = '';
+    inputBlockUnitNumber.classList.remove("is-invalid");
+
+    entryDateTimeError.textContent = '';
+    inputEntryDateTime.classList.remove("is-invalid");
+
+    exitDateTimeError.textContent = '';   
+    inputExitDateTime.classList.remove("is-invalid");
+
+    try {
+      const res = await fetch('<%- action %>', { 
+        method: 'POST', 
+        body: JSON.stringify({
+          visitor_id: '<%= visitorLog.visitor_id %>',
+          blockUnitNumber: inputBlockUnitNumber.value, 
+          entryDateTime: inputEntryDateTime.value,
+          exitDateTime: inputExitDateTime.value 
+        }),
+        headers: {'Content-Type': 'application/json'}
+      });
+      
+      const data = await res.json();
+
+      if (data.errors) {
+        if (data.errors.blockUnitNumber) {       
+          inputBlockUnitNumber.classList.add("is-invalid");
+          blockUnitNumberError.textContent = data.errors.blockUnitNumber
+        }
+        if (data.errors.contactNumber) {      
+          inputEntryDateTime.classList.add("is-invalid");
+          entryDateTimeError.textContent = data.errors.entryDateTime
+        }
+        if (data.errors.exitDateTime) {      
+          inputExitDateTime.classList.add("is-invalid");
+          exitDateTimeError.textContent = data.errors.exitDateTime
+        }
+      }
+
+      if (data.saveVisitorLog) {
+        location.assign(data.redirect);
+      }
+    }
+    catch (err) {
+      console.log("Error is here: ", err);
+    }
+  });
+</script>

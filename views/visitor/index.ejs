@@ -1,0 +1,18 @@
+<h2 class="mt-2">Recently Added Visitor</h2>
+<a href="/visitor/new" class="btn btn-success mt-2">New Visitor</a>
+<div class="row justify-content-around">
+<% visitors.forEach(visitor => { %>
+    <div class="card mt-4 mb-4 col-md-5">
+      <div class="card-body">
+        <div class="card-text mb-2"><span class="font-weight-bold">Owner:</span> <%= visitor.name %></div>
+        <div class="card-text mb-2"><span class="font-weight-bold">Contact Number:</span> <%= visitor.contactNumber %></div>
+        <div class="card-text mb-2"><span class="font-weight-bold">Last 3 digit of NRIC:</span> <%= visitor.last3DigitNRIC %></div>
+        <a href="visitorLog/<%= visitor._id %>" class="btn btn-primary">View visitor logs</a>
+        <a href="visitor/edit/<%= visitor._id %>" class="btn btn-info">Edit</a>
+        <form action="/visitor/<%= visitor._id %>?_method=DELETE" method="POST" class="d-inline">
+          <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+      </div>
+    </div>
+<% }) %>
+</div>

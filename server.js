@@ -6,8 +6,9 @@ const mongoose = require('mongoose')
 const config = require('config')
 
 // Import routes
-const indexRouter = require('./routes/index')
 const unitRouter = require('./routes/unit')
+const visitorRouter = require('./routes/visitor')
+const visitorLogRouter = require('./routes/visitorLog')
 
 // Configuration
 const app = express()
@@ -31,8 +32,13 @@ db.on('error', error => console.error(error))
 db.once('open', () => console.log('Connected to Mongoose'))
 
 // Listening to incoming request
-app.use('/', indexRouter)
+
 app.use('/unit', unitRouter)
+app.use('/visitor', visitorRouter)
+app.use('/visitorLog', visitorLogRouter)
+app.use('/', (req, res) => {
+    res.render('index')
+})
 
 // Setup nodejs server
 app.listen(port, () => console.log(`Server is running at ${port}`))

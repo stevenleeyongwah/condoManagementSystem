@@ -28,12 +28,9 @@ const handleErrors = (err) => {
 
 // All Units Route
 router.get('/', async (req, res) => {
-  let query = Unit.find()
-
   try {
-    const units = await query.sort({ date: -1 }).exec()
-
-    res.json({ units })
+    const units = await Unit.find().sort({ createdAt: -1 }).exec()
+    res.render('unit/index', { units })
   } catch {
     res.redirect('/')
   }
@@ -101,7 +98,7 @@ router.put('/:id', async (req, res) => {
 router.delete('/:id', async (req, res) => {
   try {
     await Unit.findByIdAndDelete(req.params.id)
-    res.redirect('/')
+    res.redirect('/unit')
   } catch(err) {
     res.json({ err: 'Fail to delete' })
   }
