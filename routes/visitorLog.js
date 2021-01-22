@@ -3,6 +3,7 @@ const router = express.Router()
 const Visitor = require('../models/visitor')
 const Unit = require('../models/unit')
 const VisitorLog = require('../models/visitorLog')
+const VisitCount = require('../models/visitCount')
 
 /**
  * @route   GET visitorLog/new/:id
@@ -29,7 +30,6 @@ router.get('/new/:id', (req, res) => {
  * @desc    :id = ID of visitor. This will render visitor detail & visitor logs
  */
 router.get('/:id', async (req, res) => {
-
   let searchOptions = { blockUnitNumber: '' }
 
   if (req.query.blockUnitNumber) {
@@ -76,15 +76,43 @@ router.get('/edit/:id', async (req, res) => {
  * @desc    This allow user to create visitor log for specific visitor
  */
 router.post('/', async (req, res) => {
-  console.log("HI i am here")
   try {
+    // Check if visitor block & unit number exist
     const unit = await Unit.findOne({ blockUnitNumber: req.body.blockUnitNumber })
-    console.log("unit: ", unit)
+
+    // If user input Block & Unit number and it does not exist, return error to user
     if (req.body.blockUnitNumber && !unit) {
       let errors = { blockUnitNumber: `${req.body.blockUnitNumber} does not exist` }
-      res.status(400).json({ errors });
+      return res.status(400).json({ errors });
     }
-    console.log("haha: ", req.body.visitPurpose)
+
+    // Make sure exitDateTime must be greater than entryDateTime
+    if (req.body.exitDateTime && (req.body.exitDateTime < req.body.entryDateTime)){
+      let errors = { exitDateTime: `Exit date time must be later than entry date time` }
+      return res.status(400).json({ errors });
+    }
+
+    // Keep track of visitor number in condo
+    if (!req.body.exitDateTime && unit) {
+      let visitCount = await VisitCount.findOne({ blockUnitNumber: unit._id })
+
+      if (!visitCount) {
+        visitCount = new VisitCount({
+          blockUnitNumber: unit._id,
+          count: 1,
+        })
+      } else {
+        // Denied entry if visitor in one condo is more than or equal to 8 persons
+        if ( visitCount.count >= 8 ) {
+          let errors = { blockUnitNumber: `There are already 8 visitors in the ${unit.blockUnitNumber}. Denied entry` }
+          return res.status(400).json({ errors });
+        }
+        visitCount.count = visitCount.count + 1
+      }
+      await visitCount.save();
+    }
+
+    // Populate visitorLog instance
     const visitorLog = new VisitorLog({
       visitor_id: req.body.visitor_id,
       blockUnitNumber: req.body.blockUnitNumber,
@@ -92,7 +120,7 @@ router.post('/', async (req, res) => {
       entryDateTime: req.body.entryDateTime,
       exitDateTime: req.body.exitDateTime
     })
-    console.log("visitorLog: ", visitorLog)
+
     const saveVisitorLog = await visitorLog.save();
     
     res.status(201).json({ saveVisitorLog, redirect: `/visitorLog/${req.body.visitor_id}` });
@@ -109,14 +137,40 @@ router.post('/', async (req, res) => {
  */
 router.put('/:id', async (req, res) => {
   try {
-    const unit = await Unit.findOne({ blockUnitNumber: req.body.blockUnitNumber })
-    
+    // Check if visitor block & unit number exist
+    let unit = await Unit.findOne({ blockUnitNumber: req.body.blockUnitNumber })
+
+    // If user input Block & Unit number and it does not exist, return error to user
     if (req.body.blockUnitNumber && !unit) {
       let errors = { blockUnitNumber: `${req.body.blockUnitNumber} does not exist` }
-      res.status(400).json({ errors });
+      return res.status(400).json({ errors });
+    }
+    
+    // Make sure exitDateTime must be greater than entryDateTime
+    if (req.body.exitDateTime && (req.body.exitDateTime < req.body.entryDateTime)){
+      let errors = { exitDateTime: `Exit date time must be later than entry date time` }
+      return res.status(400).json({ errors });
     }
 
-    let visitorLog = await VisitorLog.findById(req.params.id)
+    // Keep track of visitor number in condo
+    if (!req.body.exitDateTime && unit) {
+      let visitCount = await VisitCount.findOne({ blockUnitNumber: unit._id })
+
+      if (!visitCount) {
+        visitCount = new VisitCount({
+          blockUnitNumber: unit._id,
+          count: 1,
+        })
+      } else {
+        // Denied entry if visitor in one condo is more than or equal to 8 persons
+        if ( visitCount.count >= 8 ) {
+          let errors = { blockUnitNumber: `There are already 8 visitors in the ${unit.blockUnitNumber}. Denied entry` }
+          return res.status(400).json({ errors });
+        }
+        visitCount.count = visitCount.count + 1
+      }
+      await visitCount.save();
+    }
 
     visitorLog.visitor_id = req.body.visitor_id
     visitorLog.blockUnitNumber = req.body.blockUnitNumber
@@ -133,6 +187,10 @@ router.put('/:id', async (req, res) => {
   }
 })
 
+/**
+ * @route   DELETE /:visitor_id/:id
+ * @desc    This allow user to delete visitor log
+ */
 router.delete('/:visitor_id/:id', async (req, res) => {
   try {
     await VisitorLog.findByIdAndDelete(req.params.id)

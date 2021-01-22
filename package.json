@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "concurrently \"nodemon server.js\" \"sass --watch public\\stylesheets\\scss:public\\stylesheets\\css\" "
+    "dev": "concurrently \"nodemon server.js\" "
   },
   "keywords": [],
   "author": "",

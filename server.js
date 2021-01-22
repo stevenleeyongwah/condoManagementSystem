@@ -32,7 +32,6 @@ db.on('error', error => console.error(error))
 db.once('open', () => console.log('Connected to Mongoose'))
 
 // Listening to incoming request
-
 app.use('/unit', unitRouter)
 app.use('/visitor', visitorRouter)
 app.use('/visitorLog', visitorLogRouter)

@@ -11,7 +11,7 @@ const handleErrors = (err) => {
 
     // duplicate unit number error
     if (err.code === 11000) {
-      errors.name = `UnitNumber ${err.keyValue.name} is already registered`;
+      errors[Object.keys(err.keyValue)[0]] = `${err.keyValue[Object.keys(err.keyValue)[0]]} is already registered`;
       return errors;
     }
 
@@ -33,10 +33,18 @@ const handleErrors = (err) => {
  * @desc    This will render all visitors in index page
  */
 router.get('/', async (req, res) => {
-  try {
-    let visitors = await Visitor.find().sort({ createdAt: -1 }).limit(10).exec()
+  let searchOptions = { name: '' }
 
-    res.render('visitor/index', { visitors })
+  if (req.query.name) {
+    searchOptions.name = req.query.name
+  }
+
+  try {
+    let visitors = await Visitor.find({
+      name: {'$regex': searchOptions.name, '$options': 'i'}
+    }).sort({ createdAt: -1 }).limit(10).exec()
+
+    res.render('visitor/index', { visitors, searchOptions })
   } catch(err) {
     res.json({ err })
   }
@@ -51,33 +59,23 @@ router.get('/new', (req, res) => {
 })
 
 /**
- * @route   GET /visitor/:id
- * @desc    :id =  id of visitor. This will render detail of visitor
- */
-router.get('/:id', async (req, res) => {
-  // Look for visitor in mongoDB with specific ID
-  const visitor = await Visitor.findOne({ _id: req.params.id })
-
-  // If visitor does not exist, then redirect to /visitor
-  if (visitor == null) res.redirect('/visitor')
-
-  // render detail page with visitor info
-  res.render('visitor/detail', { visitor })
-})
-
-/**
  * @route   GET /visitor/edit/:id
  * @desc    This allow user to edit visitor info
  */
 router.get('/edit/:id', async (req, res) => {
-  // Look for visitor in mongoDB with specific ID
-  const visitor = await Visitor.findById(req.params.id)
+  try {
+    // Look for visitor in mongoDB with specific ID
+    const visitor = await Visitor.findById(req.params.id)
 
-  // If visitor does not exist, then redirect to /visitor
-  if (visitor == null) res.redirect('/visitor')
+    // If visitor does not exist, then redirect to /visitor
+    if (visitor == null) res.redirect('/visitor')
 
-  // Render edit page
-  res.render('visitor/edit', { visitor, action: `/visitor/${visitor.id}?_method=PUT` })
+    // Render edit page
+    res.render('visitor/edit', { visitor, action: `/visitor/${visitor.id}?_method=PUT` })
+  } catch (err) {
+    res.json({ err })
+  }
+
 })
 
 /**
@@ -122,7 +120,7 @@ router.put('/:id', async (req, res) => {
     const saveVisitor = await visitor.save()
 
     // Response back user with save data
-    res.status(201).json({ saveVisitor, redirect: `/visitor/${visitor.id}` });
+    res.status(201).json({ saveVisitor, redirect: "/visitor" });
   } catch(err) {
     const errors = handleErrors(err);
     res.status(400).json({ errors });

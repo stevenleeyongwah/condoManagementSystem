@@ -1,20 +1,20 @@
 <div class="form-group">
-  <label for="blockUnitNumber">Block & Unit Number</label>
+  <label for="blockUnitNumber">Block & Unit Number <span class="small text-muted">(Example format: A-00-01)</span></label>
   <input value="<%= visitorLog.blockUnitNumber %>" type="text" name="blockUnitNumber" id="blockUnitNumber" class="form-control">
   <div class="blockUnitNumberError invalid-feedback"></div>
 </div>
 <div class="form-group">
-  <label for="visitPurpose">Visit Purpose</label>
+  <label for="visitPurpose">Visit Purpose <span class="small text-muted">(Must be string)</span></label>
   <input value="<%= visitorLog.visitPurpose %>" type="text" name="visitPurpose" id="visitPurpose" class="form-control">
   <div class="visitPurposeError invalid-feedback"></div>
 </div>
 <div class="form-group">
-  <label for="entryDateTime">Entry Date Time</label>
+  <label for="entryDateTime">Entry Date Time <span class="small text-muted">(Must input entry date time)</span></label>
   <input required value="<%= visitorLog.entryDateTime %>" type="datetime-local" name="entryDateTime" id="entryDateTime" class="form-control">
   <div class="entryDateTimeError invalid-feedback"></div>
 </div>
 <div class="form-group">
-  <label for="exitDateTime">Exit Date Time</label>
+  <label for="exitDateTime">Exit Date Time <span class="small text-muted">(Can be left empty or must greater than entry date time)</span></label>
   <input value="<%= visitorLog.exitDateTime %>" type="datetime-local" name="exitDateTime" id="exitDateTime" class="form-control">
   <div class="exitDateTimeError invalid-feedback"></div>
 </div>

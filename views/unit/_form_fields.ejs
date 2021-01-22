@@ -1,15 +1,15 @@
 <div class="form-group">
-  <label for="blockUnitNumber">Block & Unit number</label>
+  <label for="blockUnitNumber">Block & Unit number <span class="small text-muted">(Example format: A-00-01)</span></label>
   <input required value="<%= unit.blockUnitNumber %>" type="text" name="blockUnitNumber" id="blockUnitNumber" class="form-control">
   <div class="blockUnitNumberError invalid-feedback"></div>
 </div>
 <div class="form-group">
-  <label for="name">Owner name</label>
+  <label for="name">Owner name <span class="small text-muted">(Must be alphabetical character. Length between 1-40.)</span></label>
   <input required value="<%= unit.name %>" type="text" name="name" id="name" class="form-control">
   <div class="nameError invalid-feedback"></div>
 </div>
 <div class="form-group">
-  <label for="contactNumber">Contact number</label>
+  <label for="contactNumber">Contact number <span class="small text-muted">(Only digit. Length must be 8 characters.)</span></label>
   <input required value="<%= unit.contactNumber %>" type="text" name="contactNumber" id="contactNumber" class="form-control">
   <div class="contactNumberError invalid-feedback"></div>
 </div>
@@ -22,7 +22,7 @@
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    
+
     // Get reference
     const inputBlockUnitNumber = document.getElementById("blockUnitNumber");
     const blockUnitNumberError = document.querySelector('.blockUnitNumberError');
@@ -38,7 +38,7 @@
     inputBlockUnitNumber.classList.remove("is-invalid");
     inputName.classList.remove("is-invalid");
     inputContactNumber.classList.remove("is-invalid");
-    console.log('<%- action %>')
+
     try {
       const res = await fetch('<%- action %>', { 
         method: 'POST', 
@@ -66,13 +66,13 @@
           contactNumberError.textContent = data.errors.contactNumber
         }
       }
-      
+
       if (data.saveUnit) {
         location.assign('/unit');
       }
     }
     catch (err) {
-      console.log("Error is here: ", err);
+      location.assign('/unit');
     }
   });
 </script>

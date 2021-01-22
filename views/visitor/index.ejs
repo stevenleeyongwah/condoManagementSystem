@@ -1,10 +1,16 @@
 <h2 class="mt-2">Recently Added Visitor</h2>
-<a href="/visitor/new" class="btn btn-success mt-2">New Visitor</a>
+<a href="/visitor/new" class="btn btn-success mt-2 mb-3">New Visitor</a>
+<form action="/visitor" method="GET">
+  <div class="input-group rounded mb-3">
+    <input type="search" class="form-control rounded" placeholder="Search with name" name="name" value="<%= searchOptions.name %>" />
+    <button type="submit" class="ml-2 btn btn-primary">Search</button>
+  </div>
+</form>
 <div class="row justify-content-around">
 <% visitors.forEach(visitor => { %>
     <div class="card mt-4 mb-4 col-md-5">
       <div class="card-body">
-        <div class="card-text mb-2"><span class="font-weight-bold">Owner:</span> <%= visitor.name %></div>
+        <div class="card-text mb-2"><span class="font-weight-bold">Name:</span> <%= visitor.name %></div>
         <div class="card-text mb-2"><span class="font-weight-bold">Contact Number:</span> <%= visitor.contactNumber %></div>
         <div class="card-text mb-2"><span class="font-weight-bold">Last 3 digit of NRIC:</span> <%= visitor.last3DigitNRIC %></div>
         <a href="visitorLog/<%= visitor._id %>" class="btn btn-primary">View visitor logs</a>

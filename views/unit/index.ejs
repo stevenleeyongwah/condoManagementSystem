@@ -1,5 +1,11 @@
 <h2 class="mt-2">Recently Added Condo</h2>
-<a href="/unit/new" class="btn btn-success mt-2">New Condo</a>
+<a href="/unit/new" class="btn btn-success mt-2 mb-3">New Condo</a>
+<form action="/unit" method="GET">
+  <div class="input-group rounded mb-3">
+    <input type="search" class="form-control rounded" placeholder="Search with block & unit number (Example: B-00-01)" name="blockUnitNumber" value="<%= searchOptions.blockUnitNumber %>" />
+    <button type="submit" class="ml-2 btn btn-primary">Search</button>
+  </div>
+</form>
 <div class="row justify-content-around">
 <% units.forEach(unit => { %>
     <div class="card mt-4 mb-4 col-md-5">
