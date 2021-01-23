@@ -146,6 +146,16 @@ router.put('/:id', async (req, res) => {
     // Search for visitor log with id provided
     let visitorLog = await VisitorLog.findById(req.params.id)
 
+    // Reduce visitor in condo
+    if (req.body.exitDateTime && !visitorLog.exitDateTime && unit) {
+      let visitCount = await VisitCount.findOne({ blockUnitNumber: unit._id })
+
+      if (visitCount) {
+        visitCount.count = visitCount.count - 1
+        await visitCount.save();
+      }
+    }
+
     // Keep track of visitor number in condo
     if (!req.body.exitDateTime && unit) {
       let visitCount = await VisitCount.findOne({ blockUnitNumber: unit._id })
