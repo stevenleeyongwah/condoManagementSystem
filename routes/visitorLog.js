@@ -61,13 +61,6 @@ router.get('/:id', async (req, res) => {
  */
 router.get('/edit/:id', async (req, res) => {
   let visitorLog = await VisitorLog.findById(req.params.id)
-  
-  // // visitorLog.entryDateTime = substring(0, visitorLog.entryDateTime.length - 1);
-  // console.log(visitorLog.entryDateTime.toDateString())
-  // console.log(visitorLog.entryDateTime.toISOString().slice(0, -1))
-  // visitorLog.entryDateTime = visitorLog.entryDateTime.toISOString().slice(0, -1)
-  // console.log(visitorLog)
-
   res.render('visitorLog/edit', { visitorLog, action: `/visitorLog/${visitorLog.id}?_method=PUT`, redirect: '/visitorLog' })
 })
 
@@ -77,6 +70,12 @@ router.get('/edit/:id', async (req, res) => {
  */
 router.post('/', async (req, res) => {
   try {
+    // Make sure exitDateTime must be greater than entryDateTime
+    if (req.body.exitDateTime && (req.body.exitDateTime < req.body.entryDateTime)){
+      let errors = { exitDateTime: `Exit date time must be later than entry date time` }
+      return res.status(400).json({ errors });
+    }
+
     // Check if visitor block & unit number exist
     const unit = await Unit.findOne({ blockUnitNumber: req.body.blockUnitNumber })
 
@@ -86,13 +85,6 @@ router.post('/', async (req, res) => {
       return res.status(400).json({ errors });
     }
 
-    // Make sure exitDateTime must be greater than entryDateTime
-    if (req.body.exitDateTime && (req.body.exitDateTime < req.body.entryDateTime)){
-      let errors = { exitDateTime: `Exit date time must be later than entry date time` }
-      return res.status(400).json({ errors });
-    }
-
-    // Keep track of visitor number in condo
     if (!req.body.exitDateTime && unit) {
       let visitCount = await VisitCount.findOne({ blockUnitNumber: unit._id })
 
@@ -126,7 +118,6 @@ router.post('/', async (req, res) => {
     res.status(201).json({ saveVisitorLog, redirect: `/visitorLog/${req.body.visitor_id}` });
   }
   catch(err) {
-    console.log(err)
     res.status(400).json({ msg: err });
   }
 })
@@ -137,6 +128,12 @@ router.post('/', async (req, res) => {
  */
 router.put('/:id', async (req, res) => {
   try {
+    // Make sure exitDateTime must be greater than entryDateTime
+    if (req.body.exitDateTime && (req.body.exitDateTime < req.body.entryDateTime)){
+      let errors = { exitDateTime: `Exit date time must be later than entry date time` }
+      return res.status(400).json({ errors });
+    }
+
     // Check if visitor block & unit number exist
     let unit = await Unit.findOne({ blockUnitNumber: req.body.blockUnitNumber })
 
@@ -146,11 +143,8 @@ router.put('/:id', async (req, res) => {
       return res.status(400).json({ errors });
     }
     
-    // Make sure exitDateTime must be greater than entryDateTime
-    if (req.body.exitDateTime && (req.body.exitDateTime < req.body.entryDateTime)){
-      let errors = { exitDateTime: `Exit date time must be later than entry date time` }
-      return res.status(400).json({ errors });
-    }
+    // Search for visitor log with id provided
+    let visitorLog = await VisitorLog.findById(req.params.id)
 
     // Keep track of visitor number in condo
     if (!req.body.exitDateTime && unit) {
@@ -171,7 +165,7 @@ router.put('/:id', async (req, res) => {
       }
       await visitCount.save();
     }
-
+    
     visitorLog.visitor_id = req.body.visitor_id
     visitorLog.blockUnitNumber = req.body.blockUnitNumber
     visitorLog.visitPurpose = req.body.visitPurpose
@@ -179,7 +173,7 @@ router.put('/:id', async (req, res) => {
     visitorLog.exitDateTime = req.body.exitDateTime
 
     const saveVisitorLog = await visitorLog.save();
-    
+
     res.status(201).json({ saveVisitorLog, redirect: `/visitorLog/${req.body.visitor_id}` });
   }
   catch(err) {

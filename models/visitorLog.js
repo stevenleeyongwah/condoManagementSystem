@@ -14,11 +14,11 @@ const visitorLogSchema = new Schema({
         type: String,
     },
     entryDateTime: {
-        type: Date,
+        type: String,
         required: true
     },
     exitDateTime: {
-        type: Date
+        type: String
     },
     createdAt: {
         type: Date,

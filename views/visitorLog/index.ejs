@@ -28,8 +28,8 @@
               <td><%= log.createdAt.toLocaleDateString() %></td>
               <td><%= log.blockUnitNumber %></td>
               <td><%= log.visitPurpose %></td>
-              <td><%= log.entryDateTime %></td>
-              <td><%= log.exitDateTime %></td>
+              <td><%= log.entryDateTime ? new Date(log.entryDateTime) : '' %></td>
+              <td><%= log.exitDateTime ? new Date(log.exitDateTime) : '' %></td>
               <td><a href="/visitorLog/edit/<%= log.id %>" class="btn btn-info mb-3">Edit</a></td>
               <td>
                 <form action="/visitorLog/<%= visitor._id %>/<%= log._id %>?_method=DELETE" method="POST" class="d-inline">
